@@ -134,9 +134,7 @@ FROM paintings AS ps
 NATURAL JOIN (
     SELECT id AS artist_id, first_name, last_name
     FROM artists
-) AS ats
-  
- 
+) AS ats;
 
 -- SELF JOIN
 DROP TABLE IF EXISTS employee_master;

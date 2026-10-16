@@ -1,122 +1,78 @@
-select * from paintings;
-select * from artists;
-select * from collectors;
-select * from sales;
+-- SQL dialect: MySQL 8.0+
+-- Self-contained exercise to identify and remove duplicate artist names.
+-- Run only in a disposable practice database: this script recreates its table.
 
--- WORKING WITH DUPLICATE DATA
+DROP TABLE IF EXISTS artists;
+CREATE TABLE artists (
+    id INT PRIMARY KEY,
+    first_name VARCHAR(40) NOT NULL,
+    last_name VARCHAR(40) NOT NULL
+);
 
-insert into artists values (5,'Kate','Smith');
-insert into artists values (6,'Natali','Wein');
-	
--- Identify the duplicate data. the count (id) allows us see how many times an entry is duplicated
+INSERT INTO artists (id, first_name, last_name)
+VALUES
+    (1, 'Thomas', 'Black'),
+    (2, 'Kate', 'Smith'),
+    (3, 'Natali', 'Wein'),
+    (4, 'Francesco', 'Benelli'),
+    (5, 'Nicholas', 'Smith'),
+    (6, 'Perl', 'Hoon'),
+    (7, 'Kate', 'Smith'),
+    (8, 'Natali', 'Wein'),
+    (9, 'Kate', 'Smith'),
+    (10, 'Natali', 'Wein');
 
-select first_name, last_name, count(id)
-from artists
-group by first_name, last_name
+-- 1. Identify duplicate name combinations.
+SELECT
+    first_name,
+    last_name,
+    COUNT(*) AS record_count
+FROM artists
+GROUP BY first_name, last_name
+HAVING COUNT(*) > 1
+ORDER BY record_count DESC, last_name, first_name;
 
--- we now select the duplicated entries
+-- 2. Inspect individual rows and their duplicate number.
+SELECT
+    id,
+    first_name,
+    last_name,
+    ROW_NUMBER() OVER (
+        PARTITION BY first_name, last_name
+        ORDER BY id
+    ) AS duplicate_number
+FROM artists
+ORDER BY last_name, first_name, id;
 
-select first_name, last_name, max(id)
-from artists
-group by first_name, last_name
-having count(id)>1;
+-- 3. Keep the lowest ID for each name and delete all subsequent duplicates.
+-- The derived-table layer avoids MySQL's target-table subquery restriction.
+DELETE FROM artists
+WHERE id IN (
+    SELECT id
+    FROM (
+        SELECT
+            id,
+            ROW_NUMBER() OVER (
+                PARTITION BY first_name, last_name
+                ORDER BY id
+            ) AS duplicate_number
+        FROM artists
+    ) AS ranked_artists
+    WHERE duplicate_number > 1
+);
 
--- Once identified, then delete move the duplicate data.
+SELECT * FROM artists ORDER BY id;
 
-delete from artists
-where id in (select max(id)
-             from artists
-             group by first_name, last_name
-             having count(id)>1)
+-- 4. Alternative: write a separate deduplicated copy for review.
+DROP TABLE IF EXISTS artists_deduplicated;
+CREATE TABLE artists_deduplicated AS
+SELECT
+    MIN(id) AS id,
+    first_name,
+    last_name
+FROM artists
+GROUP BY first_name, last_name;
 
--- the method above works when there is one duplicate value. 
+SELECT * FROM artists_deduplicated ORDER BY id;
 
--- Method 2: when there are multiple duplicate records
-insert into artists values (5,'Kate','Smith');
-insert into artists values (6,'Natali','Wein');
-insert into artists values (7,'Kate','Smith');
-insert into artists values (8,'Natali','Wein');
-	
-	select * from artists;
-	
-	delete from artists 
-	where id not in (select min(id) -- This subquery returns all unique records, we keep the minimum record and delete the rest
-					from artists 
-					group by first_name, last_name);
-					
-
--- Method 3: When there is huge dataset, we can create a duplicate table that carries the unique values.
-	select * from artists;
-
-	create table artists_bkp 
-	as
-	select min(id) as id, first_name, last_name
-	from artists 
-	group by first_name, last_name;
-	
-	select * from artists_bkp;
-	
--- Sub method 2: Using Truncate
-	insert into artists values (1,'Thomas','Black');
-	insert into artists values (2,'Kate','Smith');
-	insert into artists values (3,'Natali','Wein');
-	insert into artists values (4,'Francesco','Benelli');
-	insert into artists values (5,'Kate','Smith');
-	insert into artists values (6,'Natali','Wein');
-	insert into artists values (7,'Kate','Smith');
-	insert into artists values (8,'Natali','Wein');
-
-	select * from artists;
-	select * from artists_bkp;
-	
-	truncate table artists;
-	
-	insert into artists 
-	select * from artists_bkp;
-	
-	drop table artists_bkp;
-	
-select * from paintings;
-select * from artists;
-select * from collectors;
-select * from sales;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-select * from paintings;
-select * from artists;
-select * from collectors;
-select * from sales;
+-- Review the deduplicated copy before using it to replace any other table.

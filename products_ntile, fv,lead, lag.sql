@@ -1,4 +1,8 @@
-	DROP TABLE product;
+-- SQL dialect: MySQL 8.0+
+-- Window-function exercises for product prices.
+-- Run in a dedicated practice database; this script recreates the product table.
+
+DROP TABLE IF EXISTS product;
 	CREATE TABLE product
 	(
 		product_category varchar(255),
@@ -42,15 +46,31 @@
 
 ---- 1) Write query to display the most expensive product under each category (corresponding to each record)
 
-	 SELECT *, FIRST_VALUE (product_name) OVER (PARTITION BY product_category ORDER BY PRICE desc) AS most_expensive_product
-	 FROM product;
+	 SELECT
+    product_category,
+    brand,
+    product_name,
+    price,
+    FIRST_VALUE(product_name) OVER (
+        PARTITION BY product_category
+        ORDER BY price DESC, product_name
+    ) AS most_expensive_product
+FROM product;
 
 -- 2) Write query to display the 2nd most expensive product under each category 
 		-- (corresponding to each record)
 	
-	SELECT *, NTH_VALUE(product_name, 2)OVER (PARTITION BY product_category ORDER BY PRICE desc
-											 range between unbounded preceding and unbounded following) AS second_most_expensive_product
-	FROM product;
+	SELECT
+    product_category,
+    brand,
+    product_name,
+    price,
+    NTH_VALUE(product_name, 2) OVER (
+        PARTITION BY product_category
+        ORDER BY price DESC, product_name
+        ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS second_most_expensive_product
+FROM product;
 
 --3) Write a query to segregate all the expensive phones, mid range phones and the cheaper phones.
 

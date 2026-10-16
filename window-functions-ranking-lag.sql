@@ -1,6 +1,8 @@
 -- SQL dialect: MySQL 8.0+
 -- Practice examples for aggregate, ranking, and navigation window functions.
--- Run in a dedicated practice database.
+-- Run in a dedicated practice database; the demo table is recreated each time.
+
+DROP TABLE IF EXISTS employee_rank_demo;
 
 CREATE TABLE employee_rank_demo (
     emp_id INT PRIMARY KEY,

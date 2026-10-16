@@ -11,8 +11,14 @@ CREATE TABLE IF NOT EXISTS trigger_test (
     message VARCHAR(100)
 );
 
--- Version 1: log a generic message for each inserted employee.
+-- Reset this demo's log so repeated practice runs are easier to compare.
+TRUNCATE TABLE trigger_test;
+
+-- Remove the previous version and any demo employee rows from an earlier run.
 DROP TRIGGER IF EXISTS my_trigger;
+DELETE FROM employee WHERE emp_id BETWEEN 109 AND 111;
+
+-- Version 1: log a generic message for each inserted employee.
 DELIMITER $$
 CREATE TRIGGER my_trigger
 BEFORE INSERT ON employee

@@ -1,4 +1,8 @@
 -- SQL dialect: MySQL 8.0+
+-- Run in a dedicated practice database. This script recreates its demo tables.
+DROP TABLE IF EXISTS projects, manager, department, employee;
+
+-- SQL dialect: MySQL 8.0+
 -- Run this example in a dedicated practice database.
 -- The sample employee, department, manager, and projects tables are defined here.
 

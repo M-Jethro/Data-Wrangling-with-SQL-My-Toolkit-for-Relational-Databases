@@ -44,7 +44,20 @@ SELECT
 FROM artists
 ORDER BY last_name, first_name, id;
 
--- 3. Keep the lowest ID for each name and delete all subsequent duplicates.
+-- 3. Alternative method: create a deduplicated copy before changing the original.
+-- This uses the same duplicate-containing input as the DELETE example below.
+DROP TABLE IF EXISTS artists_deduplicated;
+CREATE TABLE artists_deduplicated AS
+SELECT
+    MIN(id) AS id,
+    first_name,
+    last_name
+FROM artists
+GROUP BY first_name, last_name;
+
+SELECT * FROM artists_deduplicated ORDER BY id;
+
+-- 4. Keep the lowest ID for each name and delete all subsequent duplicates.
 -- The derived-table layer avoids MySQL's target-table subquery restriction.
 DELETE FROM artists
 WHERE id IN (
@@ -62,17 +75,5 @@ WHERE id IN (
 );
 
 SELECT * FROM artists ORDER BY id;
-
--- 4. Alternative: write a separate deduplicated copy for review.
-DROP TABLE IF EXISTS artists_deduplicated;
-CREATE TABLE artists_deduplicated AS
-SELECT
-    MIN(id) AS id,
-    first_name,
-    last_name
-FROM artists
-GROUP BY first_name, last_name;
-
-SELECT * FROM artists_deduplicated ORDER BY id;
 
 -- Review the deduplicated copy before using it to replace any other table.

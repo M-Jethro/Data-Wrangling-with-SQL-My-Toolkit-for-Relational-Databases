@@ -3,7 +3,7 @@ create table paintings
     id              int,
     name            varchar(40),
     artist_id       int,
-    listed_price    float
+    listed_price DECIMAL(10,2)
 );
 
 create table artists
@@ -27,7 +27,7 @@ create table sales
     painting_id         int,
     artist_id           int,
     collector_id        int,
-    sales_price         float
+    sales_price DECIMAL(10,2)
 );
 
 insert into paintings values (11,'Miracle',1,300);
@@ -122,11 +122,14 @@ insert into sales values (1006,'2021-11-22',17,3,103,50);
 
 
 -- NATURAL JOIN - combines rows from both tables based on columns with the same name and data types
- alter table artists rename column id to artist_id; -- did this to create a mutual column between both tables
-
-  SELECT *
-  FROM paintings ps
-  NATURAL JOIN artists ats
+ -- Demonstrate NATURAL JOIN without altering the original artists table.
+-- The derived table exposes artist_id so it is the only shared column name.
+SELECT *
+FROM paintings AS ps
+NATURAL JOIN (
+    SELECT id AS artist_id, first_name, last_name
+    FROM artists
+) AS ats
   
  
 

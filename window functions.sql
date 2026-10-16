@@ -1,5 +1,10 @@
+-- SQL dialect: MySQL 8.0+
+-- Run in a dedicated practice database; this script recreates its demo tables.
 DROP TABLE IF EXISTS employee;
-	create table employee
+DROP TABLE IF EXISTS fb_eu_energy, fb_asia_energy, fb_na_energy;
+DROP TABLE IF EXISTS students;
+
+CREATE TABLE employee
 	( emp_ID int
 	, emp_NAME varchar(50)
 	, DEPT_NAME varchar(50)
@@ -32,9 +37,7 @@ DROP TABLE IF EXISTS employee;
 	COMMIT;
 
 
-	select * from employee
-
-
+	SELECT * FROM employee;
 -- 1) Fetch the first 2 employees from each department to join the company.
 	 SELECT*
 	 FROM
@@ -42,7 +45,7 @@ DROP TABLE IF EXISTS employee;
 		 SELECT *, ROW_NUMBER() OVER (PARTITION BY dept_name ORDER BY emp_id) as row_number
 		 FROM employee
 		) EMP_TABLE
-	WHERE EMP_TABLE.row_number IN (1,2)
+	WHERE EMP_TABLE.row_number IN (1,2);
 
 
 -- 2) Fetch the top 3 employees in each department earning the max salary.
@@ -52,26 +55,23 @@ DROP TABLE IF EXISTS employee;
 		 SELECT *, RANK() OVER (PARTITION BY dept_name ORDER BY salary desc) as rank
 		 FROM employee
 		) EMP_TABLE
-	WHERE EMP_TABLE.rank IN (1,2,3)
+	WHERE EMP_TABLE.rank IN (1,2,3);
 
 
--- Practice Excercise1
+-- Practice Exercise 1
 
 
-	create table fb_eu_energy
+	CREATE TABLE fb_eu_energy
+		(
+			date            DATE,
+			consumption     INT
+		);
+	CREATE TABLE fb_asia_energy
 		(
 			date            date,
 			consumption     int
 		);
-DROP TABLE IF EXISTS fb_eu_energy;
-	DROP TABLE IF EXISTS fb_asia_energy;
-	create table fb_asia_energy
-		(
-			date            date,
-			consumption     int
-		);
-	DROP TABLE IF EXISTS fb_na_energy;
-	create table fb_na_energy
+	CREATE TABLE fb_na_energy
 		(
 			date            date,
 			consumption     int
@@ -119,19 +119,17 @@ If there are multiple days with same highest energy consumption then display bot
 		SELECT date, SUM(consumption) AS total_consumption, 
 			  DENSE_RANK() OVER (ORDER BY SUM(consumption) DESC) RNK
 		FROM CTE
-		GROUP BY date 
-		ORDER BY date desc
+		GROUP BY date
 	   )
 
 	 SELECT *
 	 FROM CTE2
-	 WHERE RNK = 1
+	 WHERE RNK = 1;
 
 -- PRACTICE EXERCISE 2
 -- From the students table, write a SQL query to interchange the adjacent student names.
 -- Note: If there are no adjacent student then the student name should stay the same.
-	DROP TABLE IF EXISTS students;
-	create table students
+	CREATE TABLE students
 		(
 			id              int primary key,
 			student_name    varchar(50) not null

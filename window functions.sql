@@ -1,4 +1,4 @@
-	drop table employee;
+DROP TABLE IF EXISTS employee;
 	create table employee
 	( emp_ID int
 	, emp_NAME varchar(50)
@@ -63,15 +63,14 @@
 			date            date,
 			consumption     int
 		);
-
-	drop table fb_asia_energy;
+DROP TABLE IF EXISTS fb_eu_energy;
+	DROP TABLE IF EXISTS fb_asia_energy;
 	create table fb_asia_energy
 		(
 			date            date,
 			consumption     int
 		);
-
-	drop table fb_na_energy;
+	DROP TABLE IF EXISTS fb_na_energy;
 	create table fb_na_energy
 		(
 			date            date,
@@ -131,8 +130,7 @@ If there are multiple days with same highest energy consumption then display bot
 -- PRACTICE EXERCISE 2
 -- From the students table, write a SQL query to interchange the adjacent student names.
 -- Note: If there are no adjacent student then the student name should stay the same.
-
-	drop table students;
+	DROP TABLE IF EXISTS students;
 	create table students
 		(
 			id              int primary key,

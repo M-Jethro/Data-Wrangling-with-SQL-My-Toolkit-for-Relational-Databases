@@ -1,3 +1,8 @@
+-- SQL dialect: MySQL 8.0+
+-- Join exercises with sample painting, artist, collector, sales, and employee data.
+-- Run in a dedicated practice database; this script recreates its demo tables.
+DROP TABLE IF EXISTS employee_master, sales, collectors, artists, paintings;
+
 create table paintings
 (
     id              int,
@@ -134,8 +139,7 @@ NATURAL JOIN (
  
 
 -- SELF JOIN
-
-	drop table employee_master;
+DROP TABLE IF EXISTS employee_master;
 	create table employee_master
 	(
 		id          int,

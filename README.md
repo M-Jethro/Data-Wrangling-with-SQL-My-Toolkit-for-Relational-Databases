@@ -49,7 +49,7 @@ For the foreign-key and data-insertion lesson, run these files in order in an em
 2. `Inserting Values in a table.sql`
 3. `Triggers.sql` (optional)
 
-The trigger script demonstrates three alternative versions of one trigger and inserts employee IDs 109–111. Run it once after inserting the sample employees. MySQL Workbench and the MySQL command-line client support the `DELIMITER` commands used in that script; some browser-based SQL editors do not.
+The trigger script demonstrates three alternative versions of one trigger and inserts employee IDs 109–111. It removes those demo rows and clears its demonstration log before rerunning, so it can be used repeatedly after the branch/employee setup. MySQL Workbench and the MySQL command-line client support the `DELIMITER` commands used in that script; some browser-based SQL editors do not.
 
 ### 4. For analytical SQL exercises
 
